@@ -79,40 +79,7 @@ class LinearModel(NoiseCorrelationModel):
 		return test_X@self.parameter
 
 
-#Belows are some functions used for finding the betas by optimization
-def linearModelPredict(b,X):
-    yp = X@b
-    return yp
 
-def linearModelLossRSS(b,X,y):
-    # Make predictions
-    predY = linearModelPredict(b,X)
-    # Compute residuals.  This is an array.  
-    res = y-predY
-    # Simply sum up the squared residuals.  This is the value of our loss.
-    RSS= sum(res**2) 
-    # Because res is a vector, we can take the product of res with X.
-    gradient=-2*(res @ X)
-
-    return (RSS, gradient)		
-
-def linearModelFit(X,y,lossfcn = linearModelLossRSS):
-    # Because we know b has to have the some dimension as X has columns,
-    # We can use the number of columns to determine the size of betas
-    # In this case, we use a 2d array
-    nrows,ncols = X.shape
-    betas=np.zeros((ncols,1))
-    # Optimize the loss
-    RES = so.minimize(lossfcn,betas,args=(X,y),jac=True)
-    # Obtain estimates from the optimizer
-    estimated_betas=RES.x 
-    # Compute goodness of fit.
-    res = y-np.mean(y)
-    TSS = sum(res**2)
-    RSS,deriv = linearModelLossRSS(estimated_betas,X,y)
-    R2 = 1-RSS/TSS 
-
-    return (estimated_betas,R2)
 
 
 if __name__ == '__main__':
